@@ -142,6 +142,20 @@ C<extend_permissions> method.
 
 =cut
 
+
+has fb_graph => (
+    is => 'rw',
+    isa => 'Facebook::Graph',
+);
+
+=att fb_graph
+
+Will return the Facebook::Graph object, can only be called AFTER
+authenticate has been run. This object can then be used to
+access further information about the user once authenticated.
+
+=cut 
+
 sub authenticate {
     my ($self, $ctx, $realm, $auth_info) = @_;
 
@@ -151,6 +165,8 @@ sub authenticate {
     my $oauth = $self->_build_oauth(
         postback => $callback_uri,
     );
+    
+    $self->fb_graph($oauth);
 
     unless (defined(my $code = $ctx->request->params->{code})) {
         my $auth_url = $oauth->authorize
